@@ -28,7 +28,8 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
-            implementation(libs.coil.compose)
+            implementation(libs.ktor.client.okhttp)
+            implementation(libs.ktor.client.android)
         }
         commonMain.dependencies {
             implementation(projects.revest)
@@ -43,9 +44,12 @@ kotlin {
             implementation(libs.compose.components.resources)
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.compose.navigation)
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor)
             implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")        }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.ktor.client.darwin)
         }
     }
 }
