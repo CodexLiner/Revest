@@ -28,7 +28,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -38,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.example.project.components.NetworkImage
 import org.example.project.models.Product
-import org.example.project.screens.NavigationDestination
 import org.example.project.screens.UiState
 
 @Composable
@@ -51,17 +49,6 @@ fun ProductListScreen(
     val state by viewModel.state.collectAsState()
     val query by viewModel.query.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.loadInitial()
-    }
-
-    if (state is UiState.Navigation) {
-        val destination = (state as UiState.Navigation).destination
-        if (destination is NavigationDestination.ProductDetail) {
-            onNavigateToDetail(destination.productId)
-            viewModel.onNavigationHandled()
-        }
-    }
 
     Box(
         modifier = Modifier
@@ -84,7 +71,7 @@ fun ProductListScreen(
                 is UiState.Success -> {
                     ProductList(
                         products = uiState.data,
-                        onProductSelected = viewModel::onProductSelected
+                        onProductSelected = onNavigateToDetail
                     )
                 }
 

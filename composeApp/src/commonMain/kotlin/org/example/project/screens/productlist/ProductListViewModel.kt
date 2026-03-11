@@ -13,7 +13,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.example.project.Revest
 import org.example.project.models.Product
-import org.example.project.screens.NavigationDestination
 import org.example.project.screens.UiState
 
 class ProductListViewModel : ViewModel() {
@@ -27,14 +26,9 @@ class ProductListViewModel : ViewModel() {
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query.asStateFlow()
 
-    private var cachedProducts: List<Product> = emptyList()
 
-    fun loadInitial() {
-        if (cachedProducts.isEmpty()) {
-            loadProducts()
-        } else {
-            _state.value = UiState.Success(cachedProducts)
-        }
+    init {
+        loadProducts()
     }
 
     fun onSearchQueryChanged(query: String) {
@@ -44,14 +38,6 @@ class ProductListViewModel : ViewModel() {
         } else {
             searchProducts(query)
         }
-    }
-
-    fun onProductSelected(productId: Int) {
-        _state.value = UiState.Navigation(NavigationDestination.ProductDetail(productId))
-    }
-
-    fun onNavigationHandled() {
-        _state.value = UiState.Success(cachedProducts)
     }
 
     override fun onCleared() {
@@ -66,7 +52,6 @@ class ProductListViewModel : ViewModel() {
             }
             _state.value = result.fold(
                 onSuccess = {
-                    cachedProducts = it
                     UiState.Success(it)
                 },
                 onFailure = { UiState.Error(it.message ?: "Unknown error") }
@@ -82,7 +67,6 @@ class ProductListViewModel : ViewModel() {
             }
             _state.value = result.fold(
                 onSuccess = {
-                    cachedProducts = it
                     UiState.Success(it)
                 },
                 onFailure = { UiState.Error(it.message ?: "Unknown error") }
