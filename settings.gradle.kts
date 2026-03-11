@@ -30,5 +30,5 @@ include(
     ":data:repository",
     ":domain",
     ":di",
-    ":kyaa"
+    ":revest"
 )

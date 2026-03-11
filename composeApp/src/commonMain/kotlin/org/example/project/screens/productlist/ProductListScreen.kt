@@ -11,9 +11,9 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -26,7 +26,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -64,56 +63,51 @@ fun ProductListScreen(
         }
     }
 
-    Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing
-    ) { padding ->
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+    ) {
 
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
         ) {
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
+            ProductHeader(
+                query = query,
+                onQueryChange = viewModel::onSearchQueryChanged
+            )
 
-                ProductHeader(
-                    query = query,
-                    onQueryChange = viewModel::onSearchQueryChanged
-                )
+            when (val uiState = state) {
 
-                when (val uiState = state) {
+                is UiState.Success -> {
+                    ProductList(
+                        products = uiState.data,
+                        onProductSelected = viewModel::onProductSelected
+                    )
+                }
 
-                    is UiState.Success -> {
-                        ProductList(
-                            products = uiState.data,
-                            onProductSelected = viewModel::onProductSelected
+                is UiState.Error -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = uiState.message,
+                            color = MaterialTheme.colorScheme.error
                         )
                     }
-
-                    is UiState.Error -> {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = uiState.message,
-                                color = MaterialTheme.colorScheme.error
-                            )
-                        }
-                    }
-
-                    else -> Unit
                 }
-            }
 
-            if (state is UiState.Loading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center)
-                )
+                else -> Unit
             }
+        }
+
+        if (state is UiState.Loading) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center)
+            )
         }
     }
 }

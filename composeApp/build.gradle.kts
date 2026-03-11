@@ -1,4 +1,3 @@
-import org.gradle.kotlin.dsl.implementation
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -32,7 +31,7 @@ kotlin {
             implementation(libs.coil.compose)
         }
         commonMain.dependencies {
-            implementation(projects.kyaa)
+            implementation(projects.revest)
             implementation(libs.koin.core)
             implementation(projects.network)
             implementation(projects.common.models)

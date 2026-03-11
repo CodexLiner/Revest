@@ -11,14 +11,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.example.project.ProductKit
+import org.example.project.Revest
 import org.example.project.models.Product
 import org.example.project.screens.NavigationDestination
 import org.example.project.screens.UiState
 
 class ProductListViewModel : ViewModel() {
-    private val getProductsUseCase = ProductKit.catalog.getProductsUseCase
-    private val searchProductsUseCase = ProductKit.catalog.searchProductsUseCase
+    private val getProductsUseCase = Revest.catalog.getProductsUseCase
+    private val searchProductsUseCase = Revest.catalog.searchProductsUseCase
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     private val _state = MutableStateFlow<UiState<List<Product>>>(UiState.Loading)
