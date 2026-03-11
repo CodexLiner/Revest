@@ -3,12 +3,11 @@ package org.example.project
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import org.example.project.navigation.AppRoutes
+import androidx.navigation.toRoute
+import org.example.project.navigation.Screens
 import org.example.project.screens.productdetail.ProductDetailScreen
 import org.example.project.screens.productlist.ProductListScreen
 
@@ -21,24 +20,25 @@ fun ProductBrowserApp() {
 
         NavHost(
             navController = navController,
-            startDestination = AppRoutes.ProductList
+            startDestination = Screens.ProductList
         ) {
-            composable(AppRoutes.ProductList) {
+
+            composable<Screens.ProductList> {
                 ProductListScreen(
                     onNavigateToDetail = { productId ->
-                        navController.navigate(AppRoutes.productDetail(productId))
+                        navController.navigate(
+                            Screens.ProductDetail(productId)
+                        )
                     }
                 )
             }
-            composable(
-                route = AppRoutes.ProductDetail,
-                arguments = listOf(
-                    navArgument(AppRoutes.ARG_PRODUCT_ID) { type = NavType.IntType }
-                )
-            ) { backStackEntry ->
-                val productId = backStackEntry.arguments?.getInt(AppRoutes.ARG_PRODUCT_ID) ?: 0
+
+            composable<Screens.ProductDetail> { backStackEntry ->
+
+                val args = backStackEntry.toRoute<Screens.ProductDetail>()
+
                 ProductDetailScreen(
-                    productId = productId,
+                    productId = args.productId,
                     onBack = { navController.popBackStack() }
                 )
             }

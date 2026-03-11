@@ -38,7 +38,9 @@ fun ProductDetailScreen(
     onBack: () -> Unit,
 ) {
 
-    val viewModel: ProductDetailViewModel = viewModel()
+    val viewModel: ProductDetailViewModel = viewModel {
+        ProductDetailViewModel()
+    }
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(productId) {

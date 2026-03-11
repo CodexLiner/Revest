@@ -1,9 +1,12 @@
 package org.example.project.navigation
 
-object AppRoutes {
-    const val ARG_PRODUCT_ID = "productId"
-    const val ProductList = "product_list"
-    const val ProductDetail = "product_detail/{$ARG_PRODUCT_ID}"
+import kotlinx.serialization.Serializable
 
-    fun productDetail(productId: Int): String = "product_detail/$productId"
+sealed interface Screens {
+
+    @Serializable
+    data object ProductList : Screens
+
+    @Serializable
+    data class ProductDetail(val productId: Int) : Screens
 }
