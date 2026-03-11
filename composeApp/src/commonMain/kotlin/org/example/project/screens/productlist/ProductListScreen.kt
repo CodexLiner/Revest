@@ -5,15 +5,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -35,6 +36,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import org.example.project.components.NetworkImage
 import org.example.project.models.Product
 import org.example.project.screens.UiState
+import kotlin.math.round
 
 @Composable
 fun ProductListScreen(
@@ -155,14 +157,18 @@ private fun SearchField(
     )
 }
 
+
+
 @Composable
 private fun ProductList(
     products: List<Product>,
     onProductSelected: (Int) -> Unit
 ) {
 
-    LazyColumn(
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
         modifier = Modifier.fillMaxSize(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(
             horizontal = 16.dp,
@@ -178,7 +184,6 @@ private fun ProductList(
         }
     }
 }
-
 @Composable
 private fun ProductCard(
     product: Product,
@@ -189,38 +194,77 @@ private fun ProductCard(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(3.dp)
     ) {
 
-        Row(
-            modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Column {
 
-            NetworkImage(
-                url = product.thumbnail,
-                modifier = Modifier.size(72.dp)
-            )
+            Box {
 
-            Spacer(modifier = Modifier.size(16.dp))
+                NetworkImage(
+                    url = product.thumbnail,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f)
+                )
 
-            Column(modifier = Modifier.weight(1f)) {
+                if (product.discountPercentage > 0) {
+                    Card(
+                        modifier = Modifier.padding(6.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        ),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(
+                            text = "-${product.discountPercentage.toInt()}%",
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                }
+            }
+
+            Column(
+                modifier = Modifier.padding(10.dp)
+            ) {
 
                 Text(
                     text = product.title,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 2
+                )
+
+                Spacer(modifier = Modifier.size(4.dp))
+
+                Text(
+                    text = product.brand,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1
                 )
 
                 Spacer(modifier = Modifier.size(6.dp))
 
                 Text(
-                    text = "$${product.price}",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary
+                    text = "⭐ ${product.rating}",
+                    style = MaterialTheme.typography.labelSmall
+                )
+
+                Spacer(modifier = Modifier.size(6.dp))
+
+                val discounted =
+                    product.price - (product.price * product.discountPercentage / 100)
+                val finalPrice = round(discounted * 100) / 100
+
+                Text(
+                    text = "$${finalPrice}",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
