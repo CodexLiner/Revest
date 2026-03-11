@@ -1,35 +1,36 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# Product Browser (Kotlin Multiplatform)
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+## Summary of Business Requirements
+Build a Kotlin Multiplatform Mobile app that browses products from the DummyJSON API with shared UI for Android and iOS. The app must show a product list with search, support navigation to a product detail screen, and follow MVVM with Clean Architecture. Networking must use Ktor Client and JSON parsing must use kotlinx.serialization. UI state is managed via StateFlow.
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+## Architecture Overview
+The project is a KMP multi-module setup using Compose Multiplatform for shared UI and MVVM for presentation logic. Clean Architecture is enforced with separate data, domain, and presentation layers.
 
-### Build and Run Android Application
+Dependency direction:
+`presentation → domain ← data`
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+Module responsibilities:
+- `composeApp`: Presentation layer. Compose UI, navigation, ViewModels, UI state with `StateFlow`.
+- `domain`: Business models, repository interfaces, and use cases (e.g., get product list, search, detail). No dependencies on data or UI.
+- `data`: DTOs, Ktor remote data source, repository implementations, and DTO-to-domain mappers.
+- `network`: Ktor client configuration.
+- `di`: Manual dependency wiring.
+- `iosApp`: iOS entry point.
 
-### Build and Run iOS Application
+## Build and Run
 
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+### Android
+From the project root:
+```bash
+./gradlew :composeApp:assembleDebug
+```
+To run on a device or emulator, use Android Studio run configuration for `composeApp`.
 
----
+### iOS
+Open `iosApp` in Xcode and run on a simulator or device. The shared UI is provided by `composeApp`.
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+## Trade-offs and Assumptions
+- Manual dependency injection is used to keep the setup simple and avoid DI framework overhead.
+- The app targets the DummyJSON API and assumes availability and stable response formats.
+- Error handling focuses on user-visible states (Loading/Success/Error); retry/backoff policies are minimal.
+- Tests include at least one unit test at the use case layer; full UI or integration testing is out of scope.
