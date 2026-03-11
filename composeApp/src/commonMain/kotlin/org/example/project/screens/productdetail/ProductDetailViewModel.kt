@@ -1,18 +1,19 @@
-package org.example.project.viewmodel
+package org.example.project.screens.productdetail
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.cancel
 import org.example.project.ProductKit
 import org.example.project.models.Product
+import org.example.project.screens.UiState
 
 class ProductDetailViewModel : ViewModel() {
     private val getProductDetailUseCase = ProductKit.catalog.getProductDetailUseCase
